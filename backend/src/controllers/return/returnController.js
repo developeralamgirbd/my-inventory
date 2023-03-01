@@ -6,10 +6,11 @@ const checkAssociateService = require("../../services/common/checkAssociateServi
 const deleteService = require("../../services/common/deleteService");
 const createParentChildService = require("../../services/common/createParentChildService");
 const getOneJoinService = require("../../services/common/getOneJoinService");
+const deleteParentChildService = require("../../services/common/deleteParentChildService");
 
 exports.postReturn = async (req, res)=>{
     try {
-        const data = await createParentChildService(req, ParentModel, ChildModel);
+        const data = await createParentChildService(req, ParentModel, ChildModel, 'returnID');
         res.status(201).json(data)
     }catch (e) {
         console.log(e)
@@ -47,29 +48,19 @@ exports.getReturns = async (req, res)=>{
 
 
 
-// exports.deleteProduct = async (req, res)=>{
-//     try {
-//         const id = req.params.id;
-//         const ObjectId = mongoose.Types.ObjectId;
-//         const query = {ProductID: ObjectId(id)};
-//
-//         const isAssociate = await checkAssociateService(query, ProductModel);
-//
-//         if (isAssociate){
-//             return res.status(200).json({
-//                 error: "You can't delete. Data associate with product"
-//             })
-//         }
-//
-//         const result = await deleteService(req, res);
-//         res.status(200).json({
-//             result
-//         })
-//     }catch (e) {
-//         console.log(e)
-//         res.status(500).json({
-//             error: 'Server error occurred'
-//         })
-//     }
-// }
+exports.deleteReturn = async (req, res)=>{
+    try {
+
+        const result = await deleteParentChildService(req, ParentModel, ChildModel, 'returnID');
+        res.status(200).json({
+            result
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
 

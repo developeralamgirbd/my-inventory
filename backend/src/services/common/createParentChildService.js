@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const createParentChildService = async (request, parentModel, childModel)=>{
+const createParentChildService = async (request, parentModel, childModel, jointProperty)=>{
 
     const session = await mongoose.startSession();
 	await session.startTransaction();
@@ -18,7 +18,7 @@ const createParentChildService = async (request, parentModel, childModel)=>{
         // Second database process
         const childrenBody = request.body?.children;
         childrenBody.reduce((previous, current)=> {
-            return [...previous, current.userEmail = request.auth?.email, current.purchaseID = parent?._id]
+            return [...previous, current.userEmail = request.auth?.email, current[jointProperty] = parent?._id]
         }, []);
 
         const children = await childModel.insertMany(childrenBody, options);
