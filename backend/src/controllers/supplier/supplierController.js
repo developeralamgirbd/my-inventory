@@ -1,5 +1,5 @@
 const SupplierModel = require('../../models/supplier/Supplier');
-const ProductModel = require('../../models/product/Product');
+const PurchaseModel = require('../../models/purchase/Purchase');
 const mongoose = require('mongoose');
 
 const checkAssociateService = require("../../services/common/checkAssociateService");
@@ -72,31 +72,31 @@ exports.patchSupplier = async (req, res)=>{
     }
 }
 
-// exports.deleteSupplier = async (req, res)=>{
-//     try {
-//         const id = req.params.id;
-//         const ObjectId = mongoose.Types.ObjectId;
-//         const query = {SupplierID: ObjectId(id)};
-//
-//         const isAssociate = await checkAssociateService(query, ProductModel);
-//
-//         if (isAssociate){
-//             return res.status(200).json({
-//                 error: "You can't delete. Data associate with product"
-//             })
-//         }
-//
-//         const result = await deleteService(req, res);
-//         res.status(200).json({
-//             result
-//         })
-//     }catch (e) {
-//         console.log(e)
-//         res.status(500).json({
-//             error: 'Server error occurred'
-//         })
-//     }
-// }
+exports.deleteSupplier = async (req, res)=>{
+    try {
+        const id = req.params.id;
+        const ObjectId = mongoose.Types.ObjectId;
+        const query = {supplierID: ObjectId(id)};
+
+        const isAssociate = await checkAssociateService(query, PurchaseModel);
+
+        if (isAssociate){
+            return res.status(200).json({
+                error: "You can't delete. Data associate with purchase"
+            })
+        }
+
+        const result = await deleteService(req, SupplierModel);
+        res.status(200).json({
+            result
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
 
 exports.getSupplierForDropdown = async (req, res)=>{
     try {

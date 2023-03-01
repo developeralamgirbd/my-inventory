@@ -88,12 +88,12 @@ exports.deleteBrand = async (req, res)=>{
         const isAssociate = await checkAssociateService(query, ProductModel);
 
         if (isAssociate){
-            return res.status(200).json({
+            return res.status(400).json({
                 error: "You can't delete. Data associate with product"
             })
         }
 
-        const result = await deleteService(req, res);
+        const result = await deleteService(req, BrandModel);
         res.status(200).json({
             result
         })
