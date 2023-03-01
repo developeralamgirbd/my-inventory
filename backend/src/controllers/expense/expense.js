@@ -1,27 +1,19 @@
-const CustomerModel = require('../../models/customer/Customer');
+const ExpenseModel = require('../../models/expense/Expense');
 const ProductModel = require('../../models/product/Product');
 const mongoose = require('mongoose');
 
 const checkAssociateService = require("../../services/common/checkAssociateService");
 const deleteService = require("../../services/common/deleteService");
 const updateService = require("../../services/common/updateService");
-const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
 const dropDownService = require("../../services/common/dropDownService");
+const getOneJoinService = require("../../services/common/getOneJoinService");
 
-exports.postCustomer = async (req, res)=>{
+exports.postExpense = async (req, res)=>{
     try {
-
-        const isMatch = await CustomerModel.findOne({mobile: req.body?.mobile});
-        if (isMatch){
-            return res.status(400).json({
-                error: 'Mobile number already exits'
-            })
-        }
-
-        const customer = await createService(req, CustomerModel);
+        const expense = await createService(req, ExpenseModel);
         res.status(201).json({
-            customer
+            expense
         })
     }catch (e) {
         console.log(e)
@@ -31,15 +23,15 @@ exports.postCustomer = async (req, res)=>{
     }
 }
 
-exports.getCustomer = async (req, res)=>{
+exports.getExpense = async (req, res)=>{
     try {
 
-        const searchRgx = {$regex: req.params.keyword, $options: "i"};
-        const searchArr = [{name: searchRgx},{email: searchRgx}, {mobile: searchRgx}, {address: searchRgx}]
-
-        const customers = await getService(req, CustomerModel, searchArr);
+        const searchRgx = {$regex: req.params?.keyword, $options: "i"};
+        const searchArr = [{note: searchRgx},{amount: Number(req.params?.keyword)}, {'type.name': searchRgx}]
+        const joinStage = {$lookup: {from: 'expensetypes', localField: 'typeID', foreignField: '_id', as: 'type'}}
+        const expenses = await getOneJoinService(req, ExpenseModel, searchArr, joinStage);
         res.status(200).json({
-            customers
+            expenses
         })
     }catch (e) {
         console.log(e)
@@ -49,18 +41,9 @@ exports.getCustomer = async (req, res)=>{
     }
 }
 
-exports.patchCustomer = async (req, res)=>{
+exports.patchExpense = async (req, res)=>{
     try {
-        const id= req.params?.id;
-        const ObjectId = mongoose.Types.ObjectId;
-        const isMatch = await CustomerModel.findOne({_id: {$ne: ObjectId(id)}, mobile: req.body?.mobile});
-        if (isMatch){
-           return res.status(400).json({
-                error: 'Mobile number already exits'
-            })
-        }
-
-        const result = await updateService(req, CustomerModel);
+        const result = await updateService(req, ExpenseModel);
         res.status(200).json({
             result
         })
@@ -72,11 +55,11 @@ exports.patchCustomer = async (req, res)=>{
     }
 }
 
-// exports.deleteCustomer = async (req, res)=>{
+// exports.deleteExpense = async (req, res)=>{
 //     try {
 //         const id = req.params.id;
-//         const ObjectId = mongoose.Types.ObjectId;
-//         const query = {CustomerID: ObjectId(id)};
+//         const ObjectId = mongoose.s.ObjectId;
+//         const query = {ExpenseID: ObjectId(id)};
 //
 //         const isAssociate = await checkAssociateService(query, ProductModel);
 //
@@ -98,11 +81,11 @@ exports.patchCustomer = async (req, res)=>{
 //     }
 // }
 
-exports.getCustomerForDropdown = async (req, res)=>{
+exports.getExpenseForDropdown = async (req, res)=>{
     try {
-        const customers = await dropDownService(req, CustomerModel, {_id:1, name: 1});
+        const expenses = await dropDownService(req, ExpenseModel, {_id:1, name: 1});
         res.status(200).json({
-            customers
+            expenses
         })
     }catch (e) {
         console.log(e)

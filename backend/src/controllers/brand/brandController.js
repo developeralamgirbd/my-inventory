@@ -8,9 +8,18 @@ const updateService = require("../../services/common/updateService");
 const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
 const dropDownService = require("../../services/common/dropDownService");
+const slugify = require("slugify");
 
-exports.postBrand = async (req, res, next)=>{
+exports.postBrand = async (req, res)=>{
     try {
+
+        const isMatch = await BrandModel.findOne({name: req.body?.name});
+        if (isMatch){
+            return res.status(400).json({
+                error: 'Brand already exits'
+            })
+        }
+
         const brand = await createService(req, BrandModel);
         res.status(201).json({
             brand
@@ -46,6 +55,18 @@ exports.getBrand = async (req, res)=>{
 
 exports.patchBrand = async (req, res)=>{
     try {
+
+        const id= req.params?.id;
+        const ObjectId = mongoose.Types.ObjectId;
+        const isMatch = await BrandModel.findOne({_id: {$ne: ObjectId(id)}, name: req.body?.name});
+        if (isMatch){
+            return res.status(400).json({
+                error: 'Brand already exits'
+            })
+        }
+
+        req.body.slug = slugify(req.body.name).toLowerCase();
+
         const result = await updateService(req, BrandModel);
         res.status(200).json({
             result

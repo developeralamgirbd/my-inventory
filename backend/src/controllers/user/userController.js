@@ -9,6 +9,7 @@ const {
 	passwordUpdateService, getUserByEmailService
 }  = require('../../services/userService/userService');
 const sendEmail = require("../../helper/sendEmail");
+const mongoose = require("mongoose");
 
 exports.register = async (req, res)=>{
 	try{
@@ -180,14 +181,14 @@ exports.verifyOTP=async (req,res)=>{
 	let statusUpdate=1;
 
 	// Create a new session
-/*	const session = await mongoose.startSession();
-	await session.startTransaction();*/
+	const session = await mongoose.startSession();
+	await session.startTransaction();
 
 	try {
 
 		// Without transaction
 
-		let OTPCount = await OtpModel.aggregate([
+		/*let OTPCount = await OtpModel.aggregate([
 			{$match: {email: email, otp: OTPCode, status: status}}, {$count: "total"}
 		])
 
@@ -210,10 +211,10 @@ exports.verifyOTP=async (req,res)=>{
 		}
 		res.status(200).json({
 			message: "OTP verify successfully",
-		})
+		})*/
 
 		// With Transaction
-		/*const options = { session };
+		const options = { session };
         const otp = await OtpModel.findOne({email, otp: OTPCode, status: status }, null, options);
 
 		if (!otp){
@@ -235,7 +236,7 @@ exports.verifyOTP=async (req,res)=>{
 
         res.status(200).json({
             message: "OTP verify successfully",
-        })*/
+        })
 
 	}
 	catch (err) {

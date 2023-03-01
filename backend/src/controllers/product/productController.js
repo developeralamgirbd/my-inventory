@@ -1,27 +1,18 @@
-const CustomerModel = require('../../models/customer/Customer');
 const ProductModel = require('../../models/product/Product');
 const mongoose = require('mongoose');
 
 const checkAssociateService = require("../../services/common/checkAssociateService");
 const deleteService = require("../../services/common/deleteService");
 const updateService = require("../../services/common/updateService");
-const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
-const dropDownService = require("../../services/common/dropDownService");
+const slugify = require("slugify");
+const getTwoJoinService = require("../../services/common/getTwoJoinService");
 
-exports.postCustomer = async (req, res)=>{
+exports.postProduct = async (req, res)=>{
     try {
-
-        const isMatch = await CustomerModel.findOne({mobile: req.body?.mobile});
-        if (isMatch){
-            return res.status(400).json({
-                error: 'Mobile number already exits'
-            })
-        }
-
-        const customer = await createService(req, CustomerModel);
+        const product = await createService(req, ProductModel);
         res.status(201).json({
-            customer
+            product
         })
     }catch (e) {
         console.log(e)
@@ -31,15 +22,23 @@ exports.postCustomer = async (req, res)=>{
     }
 }
 
-exports.getCustomer = async (req, res)=>{
+exports.getProduct = async (req, res)=>{
     try {
 
         const searchRgx = {$regex: req.params.keyword, $options: "i"};
-        const searchArr = [{name: searchRgx},{email: searchRgx}, {mobile: searchRgx}, {address: searchRgx}]
+        const joinStage1 = {$lookup: {from: 'brands', localField: 'brandID', foreignField: '_id', as: 'brand'}};
+        const joinStage2 = {$lookup: {from: 'categories', localField: 'categoryID', foreignField: '_id', as: 'category'}};
 
-        const customers = await getService(req, CustomerModel, searchArr);
+        const searchArr = [
+            {title: searchRgx},
+            {details: searchRgx},
+            {unit: searchRgx},
+            {'category.name': searchRgx},
+            {'brand.name': searchRgx}];
+
+        const products = await getTwoJoinService(req, ProductModel, searchArr, joinStage1, joinStage2);
         res.status(200).json({
-            customers
+            products
         })
     }catch (e) {
         console.log(e)
@@ -49,18 +48,10 @@ exports.getCustomer = async (req, res)=>{
     }
 }
 
-exports.patchCustomer = async (req, res)=>{
+exports.patchProduct = async (req, res)=>{
     try {
-        const id= req.params?.id;
-        const ObjectId = mongoose.Types.ObjectId;
-        const isMatch = await CustomerModel.findOne({_id: {$ne: ObjectId(id)}, mobile: req.body?.mobile});
-        if (isMatch){
-           return res.status(400).json({
-                error: 'Mobile number already exits'
-            })
-        }
-
-        const result = await updateService(req, CustomerModel);
+        req.body.slug = slugify(req.body.title).toLowerCase();
+        const result = await updateService(req, ProductModel);
         res.status(200).json({
             result
         })
@@ -72,11 +63,11 @@ exports.patchCustomer = async (req, res)=>{
     }
 }
 
-// exports.deleteCustomer = async (req, res)=>{
+// exports.deleteProduct = async (req, res)=>{
 //     try {
 //         const id = req.params.id;
 //         const ObjectId = mongoose.Types.ObjectId;
-//         const query = {CustomerID: ObjectId(id)};
+//         const query = {ProductID: ObjectId(id)};
 //
 //         const isAssociate = await checkAssociateService(query, ProductModel);
 //
@@ -98,16 +89,3 @@ exports.patchCustomer = async (req, res)=>{
 //     }
 // }
 
-exports.getCustomerForDropdown = async (req, res)=>{
-    try {
-        const customers = await dropDownService(req, CustomerModel, {_id:1, name: 1});
-        res.status(200).json({
-            customers
-        })
-    }catch (e) {
-        console.log(e)
-        res.status(500).json({
-            error: 'Server error occurred'
-        })
-    }
-}

@@ -16,8 +16,8 @@ const productSchema = new Schema({
     title: {
         type: String,
         required: [true, 'Title is required'],
-        maxLength: 2,
-        minLength: 500,
+        minLength: 2,
+        maxLength: 500,
         lowercase: true
     },
     slug: {

@@ -16,15 +16,12 @@ exports.registerService = async(request)=>{
 	return user;
 };
 
-
 exports.getUserByEmailService = async (email)=>{
 	const user = await User.aggregate(  [
 		{$match: {email } }
 	] );
 	return user[0]
 };
-
-
 
 exports.passwordUpdateService = async (email, hashPassword)=>{
 	const result = await User.updateOne(

@@ -8,9 +8,17 @@ const updateService = require("../../services/common/updateService");
 const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
 const dropDownService = require("../../services/common/dropDownService");
+const slugify = require("slugify");
 
 exports.postCategory = async (req, res)=>{
     try {
+        const isMatch = await CategoryModel.findOne({name: req.body?.name});
+        if (isMatch){
+            return res.status(400).json({
+                error: 'Category already exits'
+            })
+        }
+
         const category = await createService(req, CategoryModel);
         res.status(201).json({
             category
@@ -43,6 +51,16 @@ exports.getCategories = async (req, res)=>{
 
 exports.patchCategory = async (req, res)=>{
     try {
+        const id= req.params?.id;
+        const ObjectId = mongoose.Types.ObjectId;
+        const isMatch = await CategoryModel.findOne({_id: {$ne: ObjectId(id)}, name: req.body?.name});
+        if (isMatch){
+            return res.status(400).json({
+                error: 'Category already exits'
+            })
+        }
+
+        req.body.slug = slugify(req.body.name).toLowerCase();
         const result = await updateService(req, CategoryModel);
         res.status(200).json({
             result
