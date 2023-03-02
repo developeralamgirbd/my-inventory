@@ -1,8 +1,8 @@
-const ExpenseModel = require('../../models/expense/Expense')
+const SellProductModel = require('../../models/sell/SellProduct')
 
-const expenseReportByDateService = async (fromDate, toDate, userEmail)=>{
+const sellReportByDateService = async (fromDate, toDate, userEmail)=>{
 
-    const data = await ExpenseModel.aggregate([
+    const data = await SellProductModel.aggregate([
         {$match: {
                 userEmail,
                 $expr: {
@@ -36,10 +36,13 @@ const expenseReportByDateService = async (fromDate, toDate, userEmail)=>{
             }},
         {$facet: {
                 amount: [
-                    {$group: {_id: null, totalAmount: {$sum: '$amount'}}}
+                    {$group: {_id: null, totalAmount: {$sum: '$total'}}}
                 ],
                 rows: [
-                    {$lookup: {from: 'expensetypes', localField: 'typeID', foreignField: '_id', as: 'type'}},
+                    {$lookup: {from: 'products', localField: 'productID', foreignField: '_id', as: 'product'}},
+                    {$unwind: '$product'},
+                    {$lookup: {from: 'brands', localField: 'product.brandID', foreignField: '_id', as: 'brand'}},
+                    {$lookup: {from: 'categories', localField: 'product.categoryID', foreignField: '_id', as: 'category'}},
                 ]
             }},
 
@@ -49,4 +52,4 @@ const expenseReportByDateService = async (fromDate, toDate, userEmail)=>{
     return {totalAmount: data[0]?.amount[0]?.totalAmount, rows: data[0]?.rows}
 }
 
-module.exports = expenseReportByDateService;
+module.exports = sellReportByDateService;

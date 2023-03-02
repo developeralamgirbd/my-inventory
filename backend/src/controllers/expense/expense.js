@@ -39,10 +39,11 @@ exports.getExpense = async (req, res)=>{
 exports.getExpenseReport = async (req, res)=>{
     try {
 
+        const userEmail = req.auth?.email;
         const fromDate = req.params?.fromdate;
         const toDate = req.params?.todate;
 
-        const expenses = await expenseReportByDateService(fromDate, toDate);
+        const expenses = await expenseReportByDateService(fromDate, toDate, userEmail);
         res.status(200).json({
             expenses
         })

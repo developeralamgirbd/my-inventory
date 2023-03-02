@@ -1,12 +1,10 @@
 const ParentModel = require('../../models/return/Return');
 const ChildModel = require('../../models/return/ReturnProduct');
-const mongoose = require('mongoose');
 
-const checkAssociateService = require("../../services/common/checkAssociateService");
-const deleteService = require("../../services/common/deleteService");
 const createParentChildService = require("../../services/common/createParentChildService");
 const getOneJoinService = require("../../services/common/getOneJoinService");
 const deleteParentChildService = require("../../services/common/deleteParentChildService");
+const returnsReportByDateService = require("../../services/report/returnsReportByDateService");
 
 exports.postReturn = async (req, res)=>{
     try {
@@ -46,7 +44,24 @@ exports.getReturns = async (req, res)=>{
     }
 }
 
+exports.getReturnsReport = async (req, res)=>{
+    try {
 
+        const userEmail = req.auth?.email;
+        const fromDate = req.params?.fromdate;
+        const toDate = req.params?.todate;
+
+        const returnsReport = await returnsReportByDateService(fromDate, toDate, userEmail);
+        res.status(200).json({
+            returnsReport
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
 
 exports.deleteReturn = async (req, res)=>{
     try {
