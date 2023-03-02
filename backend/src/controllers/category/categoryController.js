@@ -9,6 +9,7 @@ const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
 const dropDownService = require("../../services/common/dropDownService");
 const slugify = require("slugify");
+const getByIdService = require("../../services/common/getByIdService");
 
 exports.postCategory = async (req, res)=>{
     try {
@@ -40,6 +41,21 @@ exports.getCategories = async (req, res)=>{
         const categories = await getService(req, CategoryModel, searchArr);
         res.status(200).json({
             categories,
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
+exports.getCategoryById = async (req, res)=>{
+    try {
+
+        const category = await getByIdService(req, CategoryModel);
+        res.status(200).json({
+            category
         })
     }catch (e) {
         console.log(e)

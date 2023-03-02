@@ -11,6 +11,8 @@ const updateService = require("../../services/common/updateService");
 const createService = require("../../services/common/createService");
 const slugify = require("slugify");
 const getTwoJoinService = require("../../services/common/getTwoJoinService");
+const getByIdService = require("../../services/common/getByIdService");
+const ExpenseTypeModel = require("../../models/expense/ExpenseType");
 
 exports.postProduct = async (req, res)=>{
     try {
@@ -43,6 +45,21 @@ exports.getProduct = async (req, res)=>{
         const products = await getTwoJoinService(req, ProductModel, searchArr, joinStage1, joinStage2);
         res.status(200).json({
             products
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
+exports.getProductById = async (req, res)=>{
+    try {
+
+        const product = await getByIdService(req, ProductModel);
+        res.status(200).json({
+            product
         })
     }catch (e) {
         console.log(e)

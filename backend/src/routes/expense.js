@@ -7,7 +7,7 @@ const {postExpense,
     getExpense,
     deleteExpense,
     getExpenseReport,
-    getExpenseSummary
+    getExpenseSummary, getExpenseById
 } = require("../controllers/expense/expense");
 
 router.post('/expenses', AuthVerifyMiddleware, postExpense);
@@ -16,5 +16,7 @@ router.delete('/expenses/:id', AuthVerifyMiddleware, deleteExpense);
 router.get('/expenses/report/:fromdate/:todate', AuthVerifyMiddleware, getExpenseReport);
 router.get('/expenses/:keyword/:page/:perpage', AuthVerifyMiddleware, getExpense);
 router.get('/expenses/summary', AuthVerifyMiddleware, getExpenseSummary);
+router.get('/expenses/:id', AuthVerifyMiddleware, getExpenseById);
+
 
 module.exports = router;

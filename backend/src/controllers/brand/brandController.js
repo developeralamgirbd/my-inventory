@@ -9,6 +9,7 @@ const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
 const dropDownService = require("../../services/common/dropDownService");
 const slugify = require("slugify");
+const getByIdService = require("../../services/common/getByIdService");
 
 exports.postBrand = async (req, res)=>{
     try {
@@ -37,9 +38,6 @@ exports.getBrand = async (req, res)=>{
 
         const searchRgx = {$regex: req.params.keyword, $options: "i"};
         const searchArr = [{name: searchRgx}]
-        //
-        // let SearchRgx = {"$regex": req.params.searchKeyword, "$options": "i"}
-        // let SearchArray=[{Name: SearchRgx}]
 
         const brands = await getService(req, BrandModel, searchArr);
         res.status(200).json({
@@ -52,6 +50,23 @@ exports.getBrand = async (req, res)=>{
         })
     }
 }
+
+exports.getBrandById = async (req, res)=>{
+    try {
+
+        const brands = await getByIdService(req, BrandModel);
+        res.status(200).json({
+            brands
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
+
 
 exports.patchBrand = async (req, res)=>{
     try {

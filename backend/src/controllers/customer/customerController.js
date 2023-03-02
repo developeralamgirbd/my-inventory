@@ -9,6 +9,7 @@ const updateService = require("../../services/common/updateService");
 const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
 const dropDownService = require("../../services/common/dropDownService");
+const getByIdService = require("../../services/common/getByIdService");
 
 exports.postCustomer = async (req, res)=>{
     try {
@@ -64,6 +65,21 @@ exports.patchCustomer = async (req, res)=>{
         const result = await updateService(req, CustomerModel);
         res.status(200).json({
             result
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
+exports.getCustomerById = async (req, res)=>{
+    try {
+
+        const customer = await getByIdService(req, CustomerModel);
+        res.status(200).json({
+            customer
         })
     }catch (e) {
         console.log(e)

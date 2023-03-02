@@ -8,6 +8,7 @@ const updateService = require("../../services/common/updateService");
 const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
 const dropDownService = require("../../services/common/dropDownService");
+const getByIdService = require("../../services/common/getByIdService");
 
 exports.postExpenseType = async (req, res)=>{
     try {
@@ -40,6 +41,21 @@ exports.getExpenseType = async (req, res)=>{
         const expenseTypes = await getService(req, ExpenseTypeModel, searchArr);
         res.status(200).json({
             expenseTypes
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
+exports.getExpenseTypeById = async (req, res)=>{
+    try {
+
+        const expenseType = await getByIdService(req, ExpenseTypeModel);
+        res.status(200).json({
+            expenseType
         })
     }catch (e) {
         console.log(e)

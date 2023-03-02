@@ -8,6 +8,8 @@ const updateService = require("../../services/common/updateService");
 const getService = require("../../services/common/getService");
 const createService = require("../../services/common/createService");
 const dropDownService = require("../../services/common/dropDownService");
+const getByIdService = require("../../services/common/getByIdService");
+const ProductModel = require("../../models/product/Product");
 
 exports.postSupplier = async (req, res)=>{
     try {
@@ -48,6 +50,21 @@ exports.getSupplier = async (req, res)=>{
         })
     }
 }
+
+exports.getSupplierById = async (req, res)=>{
+    try {
+        const supplier = await getByIdService(req, SupplierModel);
+        res.status(200).json({
+            supplier
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
 
 exports.patchSupplier = async (req, res)=>{
     try {
