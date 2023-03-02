@@ -5,12 +5,13 @@ const {AuthVerifyMiddleware} = require("../middleware/AuthVerifyMiddleware");
 const {postExpense,
     patchExpense,
     getExpense,
-    deleteExpense
+    deleteExpense, getExpenseReport
 } = require("../controllers/expense/expense");
 
 router.post('/expenses', AuthVerifyMiddleware, postExpense);
 router.patch('/expenses/:id', AuthVerifyMiddleware, patchExpense);
 router.delete('/expenses/:id', AuthVerifyMiddleware, deleteExpense);
+router.get('/expenses/report/:fromdate/:todate', AuthVerifyMiddleware, getExpenseReport);
 router.get('/expenses/:keyword/:page/:perpage', AuthVerifyMiddleware, getExpense);
 
 module.exports = router;
