@@ -5,6 +5,7 @@ const createParentChildService = require("../../services/common/createParentChil
 const getOneJoinService = require("../../services/common/getOneJoinService");
 const deleteParentChildService = require("../../services/common/deleteParentChildService");
 const purchaseReportByDateService = require("../../services/report/purchaseReportByDateService");
+const purchasesSummaryService = require("../../services/summary/purchasesSummaryService");
 
 exports.postPurchase = async (req, res)=>{
     try {
@@ -54,6 +55,23 @@ exports.getPurchaseReport = async (req, res)=>{
         const purchasesReport = await purchaseReportByDateService(fromDate, toDate, userEmail);
         res.status(200).json({
             purchasesReport
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
+exports.getPurchaseSummary = async (req, res)=>{
+    try {
+
+        const userEmail = req.auth?.email;
+
+        const purchasesSummary = await purchasesSummaryService(userEmail);
+        res.status(200).json({
+            purchasesSummary
         })
     }catch (e) {
         console.log(e)

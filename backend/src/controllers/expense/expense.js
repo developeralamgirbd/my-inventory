@@ -4,6 +4,7 @@ const updateService = require("../../services/common/updateService");
 const createService = require("../../services/common/createService");
 const getOneJoinService = require("../../services/common/getOneJoinService");
 const expenseReportByDateService = require("../../services/report/expenseReportByDateService");
+const expenseSummaryService = require("../../services/summary/expenseSummaryService");
 
 exports.postExpense = async (req, res)=>{
     try {
@@ -46,6 +47,23 @@ exports.getExpenseReport = async (req, res)=>{
         const expenses = await expenseReportByDateService(fromDate, toDate, userEmail);
         res.status(200).json({
             expenses
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
+exports.getExpenseSummary = async (req, res)=>{
+    try {
+
+        const userEmail = req.auth?.email;
+
+        const expensesSummary = await expenseSummaryService(userEmail);
+        res.status(200).json({
+            expensesSummary
         })
     }catch (e) {
         console.log(e)

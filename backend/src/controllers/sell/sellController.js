@@ -9,6 +9,8 @@ const getOneJoinService = require("../../services/common/getOneJoinService");
 const deleteParentChildService = require("../../services/common/deleteParentChildService");
 const purchaseReportByDateService = require("../../services/report/purchaseReportByDateService");
 const sellReportByDateService = require("../../services/report/sellReportByDateService");
+const purchasesSummaryService = require("../../services/summary/purchasesSummaryService");
+const sellsSummaryService = require("../../services/summary/sellsSummaryService");
 
 exports.postSell = async (req, res)=>{
     try {
@@ -66,6 +68,24 @@ exports.getSellsReport = async (req, res)=>{
         })
     }
 }
+
+exports.getSellsSummary = async (req, res)=>{
+    try {
+
+        const userEmail = req.auth?.email;
+
+        const sellsSummary = await sellsSummaryService(userEmail);
+        res.status(200).json({
+            sellsSummary
+        })
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            error: 'Server error occurred'
+        })
+    }
+}
+
 
 exports.deleteSell = async (req, res)=>{
     try {
